@@ -17,7 +17,7 @@ struct FilterOne : public PrimeFilter
 {
     FilterOne(const string &filter) : m_filter(filter) { }
     ~FilterOne() = default;
-    bool operator()(const vector<string> &s)
+    bool operator()(const vector<string> &s) override
     {
         return !s.empty() ? m_filter == s.at(0) : false;
     };
@@ -34,7 +34,7 @@ struct FilterPair : public PrimeFilter
     {
     }
     ~FilterPair() = default;
-    bool operator()(const vector<string> &s)
+    bool operator()(const vector<string> &s) override
     {
         return !s.empty() ? ((s.at(0) == m_filter) && (s.at(1) == m_filter1)) : false;
     };
@@ -48,7 +48,7 @@ struct FilterAny : public PrimeFilter
 {
     FilterAny(const string &filter) : m_filter(filter) { }
     ~FilterAny() = default;
-    bool operator()(const vector<string> &s)
+    bool operator()(const vector<string> &s) override
     {
         auto it = find(s.begin(), s.end(), m_filter);
         return it != std::end(s);

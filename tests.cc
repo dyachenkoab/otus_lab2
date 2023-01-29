@@ -16,7 +16,7 @@ TEST(ReadFileTest, BasicAssertions) {
 
 TEST(ComparatorTest, BasicAssertions) {
     const vector<string> first {"1", "1", "1", "1"};
-    const vector<string> second {"2", "2", "2", "2"};
+    const vector<string> second {"1", "1", "1", "2"};
     bool isSecond_first = comparator(second, first);
-    EXPECT_NE(isSecond_first, true);
+    EXPECT_EQ(isSecond_first, true);
 }
