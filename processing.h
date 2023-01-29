@@ -83,10 +83,9 @@ bool comparator(const vector<string> &v1, const vector<string> &v2)
 
     for (; (first1 != last1) && (first2 != last2); ++first1, ++first2) {
         if (stoul(*first1) < stoul(*first2))
-            return true;
-        if (stoul(*first2) < stoul(*first1))
             return false;
+        if (stoul(*first2) < stoul(*first1))
+            return true;
     }
-
-    return (first1 == last1) && (first2 != last2);
+    return (first1 != last1) && (first2 == last2);
 }
