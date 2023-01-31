@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME}
     main.cpp
     filters.h
     processing.h
+    filterFunctions.h
 )
 
 add_executable(customTie

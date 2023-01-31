@@ -1,4 +1,5 @@
-#include "processing.h"
+//#include "processing.h"
+#include "filterFunctions.h"
 
 int main()
 {
@@ -17,7 +18,7 @@ int main()
         }
     }
 
-//    read_file(ipPool);
+    //    read_file(ipPool);
 
     try {
         sort(ipPool.begin(), ipPool.end(), comparator);
@@ -30,10 +31,13 @@ int main()
     }
 
     printAll(ipPool);
-    printFiltered(ipPool, std::make_unique<FilterOne>("1"));
-    printFiltered(ipPool, std::make_unique<FilterPair>("46", "70"));
-    printFiltered(ipPool, std::make_unique<FilterAny>("46"));
+    //    printFiltered(ipPool, std::make_unique<FilterOne>("1"));
+    //    printFiltered(ipPool, std::make_unique<FilterPair>("46", "70"));
+    //    printFiltered(ipPool, std::make_unique<FilterAny>("46"));
+
+    printFiltered(ipPool, filterOne);
+    printFiltered(ipPool, filterPair);
+    printFiltered(ipPool, filterAny);
 
     return 0;
 }
-
