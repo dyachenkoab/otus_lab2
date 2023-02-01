@@ -7,28 +7,37 @@
 #include <sstream>
 
 #include "filters.h"
+using IpPool = vector<vector<int>>;
 
-vector<string> split(const string &str, char sep)
+vector<int> split(const string &line, char sep)
 {
-    vector<string> v;
+    vector<int> v;
     string::size_type start = 0;
-    string::size_type stop = str.find_first_of(sep);
-    while (stop != std::string::npos) {
-        v.push_back(str.substr(start, stop - start));
+    string::size_type stop = line.find_first_of(sep);
 
-        start = stop + 1;
-        stop = str.find_first_of(sep, start);
+    try {
+        while (stop != string::npos) {
+            v.push_back(stoul(line.substr(start, stop - start)));
+
+            start = stop + 1;
+            stop = line.find_first_of(sep, start);
+        }
+        v.push_back(stoul(line.substr(start)));
+    } catch (const std::invalid_argument &e) {
+        std::cout << "Unfortunately there was a bad input." << e.what() << std::endl;
+        exit(0);
+    } catch (const std::out_of_range &o) {
+        std::cout << "Sorry, but index is out of range." << o.what() << std::endl;
+        exit(0);
     }
 
-    v.push_back(str.substr(start));
     return v;
 }
 
-void read_file(vector<vector<string>> &res)
+void read_file(IpPool &pool)
 {
     const string filename = "ip_filter.tsv";
 
-    vector<string> t_splitted;
     string buf;
 
     std::ifstream istrm(filename, std::ios::in);
@@ -38,43 +47,52 @@ void read_file(vector<vector<string>> &res)
         while (istrm) {
             getline(istrm, buf);
             if (!buf.empty()) {
-                t_splitted = split(buf, '\t');
-                res.push_back(split(t_splitted.at(0), '.'));
+                string::size_type sz(buf.find_first_of('\t'));
+                if (sz != string::npos) {
+                    pool.push_back(split(buf.substr(0, sz), '.'));
+                }
             }
-            t_splitted.clear();
         }
     }
 }
 
-void print(const vector<string> &vec, string &buf)
+void print()
 {
-    std::ostringstream imploded;
-    copy(vec.begin(), vec.end(), std::ostream_iterator<std::string>(imploded, "."));
-    buf = imploded.str();
-    buf.pop_back();
-    std::cout << buf << std::endl;
+    std::cout << "\n";
 }
 
-
-void printFiltered(const vector<vector<string>> &vec, std::unique_ptr<PrimeFilter> f)
+template<typename T, typename... Args>
+void print(const T &t, const Args &...args)
 {
-    string buf;
-    for (const auto &x : vec) {
-        if (f && ((*f)(x))) {
-            print(x, buf);
+    std::cout << t;
+    if (sizeof...(args) != 0)
+        std::cout << ".";
+    print(args...);
+}
+
+void print(const vector<int> &ip)
+{
+    if (ip.size() == 4)
+        print(ip.at(0), ip.at(1), ip.at(2), ip.at(3));
+}
+
+void printFiltered(const IpPool &pool, std::unique_ptr<PrimeFilter> filter)
+{
+    for (const auto &ip : pool) {
+        if (filter && ((*filter)(ip))) {
+            print(ip);
         }
     }
 }
 
-void printAll(const vector<vector<string>> &vec)
+void printAll(const IpPool &pool)
 {
-    string buf;
-    for (const auto &x : vec) {
-        print(x, buf);
+    for (const auto &ip : pool) {
+        print(ip);
     }
 }
 
-bool comparator(const vector<string> &v1, const vector<string> &v2)
+bool comparator(const vector<int> &v1, const vector<int> &v2)
 {
     auto first1 = v1.begin();
     auto last1 = v1.end();
@@ -82,9 +100,9 @@ bool comparator(const vector<string> &v1, const vector<string> &v2)
     auto last2 = v2.end();
 
     for (; (first1 != last1) && (first2 != last2); ++first1, ++first2) {
-        if (stoul(*first1) < stoul(*first2))
+        if (*first1 < *first2)
             return false;
-        if (stoul(*first2) < stoul(*first1))
+        if (*first2 < *first1)
             return true;
     }
     return (first1 != last1) && (first2 == last2);

@@ -1,9 +1,8 @@
-//#include "processing.h"
 #include "filterFunctions.h"
 
 int main()
 {
-    vector<vector<string>> ipPool;
+    IpPool ipPool;
 
     string line("");
     while (true) {
@@ -20,15 +19,7 @@ int main()
 
     //    read_file(ipPool);
 
-    try {
-        sort(ipPool.begin(), ipPool.end(), comparator);
-    } catch (const std::invalid_argument &e) {
-        std::cout << "Unfortunately there was a bad input." << e.what() << std::endl;
-        exit(0);
-    } catch (const std::out_of_range &o) {
-        std::cout << "Sorry, but index is out of range." << o.what() << std::endl;
-        exit(0);
-    }
+    sort(ipPool.begin(), ipPool.end(), comparator);
 
     printAll(ipPool);
     //    printFiltered(ipPool, std::make_unique<FilterOne>("1"));
